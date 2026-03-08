@@ -3,6 +3,7 @@ pub mod encode;
 pub mod file;
 pub mod find;
 pub mod git;
+pub mod init;
 pub mod k8s;
 pub mod net;
 pub mod nix_cmd;
@@ -13,7 +14,7 @@ use clap::{Parser, Subcommand};
 #[derive(Parser)]
 #[command(
     name = "blx",
-    about = "Blackmatter shell extensions — Rust CLI replacing shell functions",
+    about = "Blackmatter shell extensions — config-driven zsh generation + Rust CLI utilities",
     version,
     propagate_version = true
 )]
@@ -24,6 +25,8 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
+    /// Generate shell configuration (eval "$(blx init zsh)")
+    Init(init::InitArgs),
     /// File operations: extract, compress, backup, dirsize
     File(file::FileArgs),
     /// Find files, directories, content, processes
@@ -49,6 +52,7 @@ enum Command {
 impl Cli {
     pub async fn run(self) -> anyhow::Result<()> {
         match self.command {
+            Command::Init(args) => args.run(),
             Command::File(args) => args.run(),
             Command::Find(args) => args.run(),
             Command::Git(args) => args.run(),
