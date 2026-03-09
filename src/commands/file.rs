@@ -44,7 +44,7 @@ impl FileArgs {
         match self.command {
             FileCommand::Extract { archive, output } => extract(&archive, output.as_deref()),
             FileCommand::Compress { source, output } => compress(&source, &output),
-            FileCommand::Backup { file } => backup(&file),
+            FileCommand::Backup { file } => backup_file(&file),
             FileCommand::Dirsize { path } => dirsize(&path),
         }
     }
@@ -166,7 +166,8 @@ fn compress(source: &Path, output: &Path) -> Result<()> {
     Ok(())
 }
 
-fn backup(file: &Path) -> Result<()> {
+/// Create a timestamped backup of a file. Public for multicall dispatch.
+pub fn backup_file(file: &Path) -> Result<()> {
     if !file.exists() {
         bail!("file not found: {}", file.display());
     }

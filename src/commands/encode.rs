@@ -37,14 +37,7 @@ impl EncodeArgs {
                 println!("{}", urlencoding::encode(&input));
                 Ok(())
             }
-            EncodeCommand::Json => {
-                let mut input = String::new();
-                io::stdin().read_to_string(&mut input).context("failed to read stdin")?;
-                let value: serde_json::Value =
-                    serde_json::from_str(&input).context("invalid JSON")?;
-                println!("{}", serde_json::to_string_pretty(&value)?);
-                Ok(())
-            }
+            EncodeCommand::Json => pretty_json_stdin(),
         }
     }
 }
@@ -90,6 +83,15 @@ impl DecodeArgs {
             }
         }
     }
+}
+
+/// Pretty-print JSON from stdin. Public for multicall dispatch.
+pub fn pretty_json_stdin() -> Result<()> {
+    let mut input = String::new();
+    io::stdin().read_to_string(&mut input).context("failed to read stdin")?;
+    let value: serde_json::Value = serde_json::from_str(&input).context("invalid JSON")?;
+    println!("{}", serde_json::to_string_pretty(&value)?);
+    Ok(())
 }
 
 fn get_input(arg: Option<String>) -> Result<String> {

@@ -5,8 +5,10 @@ pub mod find;
 pub mod git;
 pub mod init;
 pub mod k8s;
+pub mod ls;
 pub mod net;
 pub mod nix_cmd;
+pub mod preview;
 pub mod util;
 
 use clap::{Parser, Subcommand};
@@ -47,6 +49,14 @@ enum Command {
     K8s(k8s::K8sArgs),
     /// Nix helpers: info, shell-pkg
     Nix(nix_cmd::NixArgs),
+    /// POSIX-compatible ls via eza (translates -ltra flags)
+    Ls {
+        /// Arguments to pass through (POSIX flags translated to eza)
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+    /// Preview helpers for fzf-tab (file, dir, proc, git)
+    Preview(preview::PreviewArgs),
 }
 
 impl Cli {
@@ -63,6 +73,8 @@ impl Cli {
             Command::Docker(args) => args.run(),
             Command::K8s(args) => args.run(),
             Command::Nix(args) => args.run(),
+            Command::Ls { args } => ls::run(&args),
+            Command::Preview(args) => args.run(),
         }
     }
 }

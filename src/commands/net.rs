@@ -160,6 +160,11 @@ fn killport(port: u16) -> Result<()> {
     Ok(())
 }
 
+/// Run weather lookup. Public for multicall dispatch (blx-weather needs async).
+pub async fn run_weather(city: &str) -> Result<()> {
+    weather(city).await
+}
+
 async fn weather(city: &str) -> Result<()> {
     let url = if city.is_empty() {
         "https://wttr.in?format=3".to_string()
