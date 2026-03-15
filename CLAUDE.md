@@ -57,7 +57,7 @@ blx init config --edit    # Create + open in $EDITOR
 
 blx file extract|compress|backup|dirsize
 blx find files|dirs|content|procs
-blx git commit|clone|clean-branches|tree
+blx git commit|clone|clean-branches|tree|strip-trailers
 blx net ip|serve|killport|weather
 blx encode base64|url|json
 blx decode base64|url
