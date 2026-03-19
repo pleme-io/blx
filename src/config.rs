@@ -669,7 +669,7 @@ pub fn load_config() -> anyhow::Result<ShellConfig> {
     let contents = std::fs::read_to_string(&path).map_err(|e| {
         anyhow::anyhow!("cannot read config file {}: {e}", path.display())
     })?;
-    serde_yaml::from_str::<ShellConfig>(&contents).map_err(|e| {
+    serde_yaml_ng::from_str::<ShellConfig>(&contents).map_err(|e| {
         anyhow::anyhow!(
             "config parse error in {}:\n  {e}\n\n\
              hint: run 'blx init dump-config' to see the expected format",
@@ -696,13 +696,13 @@ pub fn config_path() -> PathBuf {
 /// Used by tests and available for external callers that have YAML in memory.
 #[allow(dead_code)]
 pub fn parse_config(yaml: &str) -> anyhow::Result<ShellConfig> {
-    Ok(serde_yaml::from_str(yaml)?)
+    Ok(serde_yaml_ng::from_str(yaml)?)
 }
 
 /// Write the default config to a path (for `blx init --dump-config`).
 pub fn dump_default_config() -> anyhow::Result<String> {
     let config = ShellConfig::default();
-    Ok(serde_yaml::to_string(&config)?)
+    Ok(serde_yaml_ng::to_string(&config)?)
 }
 
 #[cfg(test)]
@@ -712,14 +712,14 @@ mod tests {
     #[test]
     fn default_config_roundtrips_through_yaml() {
         let original = ShellConfig::default();
-        let yaml = serde_yaml::to_string(&original).unwrap();
-        let parsed: ShellConfig = serde_yaml::from_str(&yaml).unwrap();
+        let yaml = serde_yaml_ng::to_string(&original).unwrap();
+        let parsed: ShellConfig = serde_yaml_ng::from_str(&yaml).unwrap();
         assert_eq!(original, parsed);
     }
 
     #[test]
     fn empty_yaml_yields_defaults() {
-        let config: ShellConfig = serde_yaml::from_str("").unwrap();
+        let config: ShellConfig = serde_yaml_ng::from_str("").unwrap();
         assert_eq!(config, ShellConfig::default());
     }
 
@@ -800,7 +800,7 @@ mod tests {
         let yaml = dump_default_config().unwrap();
         assert!(!yaml.is_empty());
         // Must parse back cleanly
-        let _: ShellConfig = serde_yaml::from_str(&yaml).unwrap();
+        let _: ShellConfig = serde_yaml_ng::from_str(&yaml).unwrap();
     }
 
     #[test]
