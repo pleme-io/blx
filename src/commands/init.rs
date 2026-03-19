@@ -101,7 +101,7 @@ fn run_check() -> anyhow::Result<()> {
         anyhow::anyhow!("cannot read {}: {e}", path.display())
     })?;
 
-    match serde_yaml::from_str::<ShellConfig>(&contents) {
+    match serde_yaml_ng::from_str::<ShellConfig>(&contents) {
         Ok(config) => {
             let warnings = validate_config(&config);
             eprintln!(
@@ -1510,7 +1510,7 @@ mod tests {
     #[test]
     fn yaml_roundtrip_generates_same_zsh() {
         let config1 = ShellConfig::default();
-        let yaml = serde_yaml::to_string(&config1).unwrap();
+        let yaml = serde_yaml_ng::to_string(&config1).unwrap();
         let config2 = config::parse_config(&yaml).unwrap();
         let zsh1 = generate_zsh(&config1);
         let zsh2 = generate_zsh(&config2);
