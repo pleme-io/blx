@@ -4,3 +4,4 @@ result
 *.swp
 *.swo
 .direnv/
+Cargo.build-spec.json
