@@ -8,6 +8,7 @@ license = "MIT"
 authors = ["Pleme Team <team@pleme.io>"]
 repository = "https://github.com/pleme-io/blx"
 homepage = "https://github.com/pleme-io/blx"
+readme = "README.md"
 keywords = ["shell", "cli", "utilities", "rust", "blackmatter"]
 categories = ["command-line-utilities", "development-tools"]
 exclude = ["module/", "target/", "result-*", "Cargo.nix", "flake.nix", "flake.lock"]

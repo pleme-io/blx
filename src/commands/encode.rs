@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use base64::{engine::general_purpose::STANDARD, Engine};
+use base64::{Engine, engine::general_purpose::STANDARD};
 use clap::{Args, Subcommand};
 use std::io::{self, Read};
 
@@ -88,7 +88,9 @@ impl DecodeArgs {
 /// Pretty-print JSON from stdin. Public for multicall dispatch.
 pub fn pretty_json_stdin() -> Result<()> {
     let mut input = String::new();
-    io::stdin().read_to_string(&mut input).context("failed to read stdin")?;
+    io::stdin()
+        .read_to_string(&mut input)
+        .context("failed to read stdin")?;
     let value: serde_json::Value = serde_json::from_str(&input).context("invalid JSON")?;
     println!("{}", serde_json::to_string_pretty(&value)?);
     Ok(())
@@ -99,7 +101,9 @@ fn get_input(arg: Option<String>) -> Result<String> {
         Some(s) => Ok(s),
         None => {
             let mut buf = String::new();
-            io::stdin().read_to_string(&mut buf).context("failed to read stdin")?;
+            io::stdin()
+                .read_to_string(&mut buf)
+                .context("failed to read stdin")?;
             Ok(buf)
         }
     }

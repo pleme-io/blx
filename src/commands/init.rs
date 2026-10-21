@@ -25,26 +25,22 @@ pub struct InitArgs {
 #[derive(Subcommand)]
 pub enum InitCommand {
     /// Generate zsh configuration to stdout (eval "$(blx init zsh)")
-    #[command(
-        long_about = "Generate zsh configuration to stdout.\n\n\
+    #[command(long_about = "Generate zsh configuration to stdout.\n\n\
                        Usage in .zshrc:\n  \
                        eval \"$(blx init zsh)\"\n\n\
                        Reads config from ~/.config/blx/blx.yaml (or BLX_CONFIG env).\n\
-                       Falls back to built-in defaults if no config file exists."
-    )]
+                       Falls back to built-in defaults if no config file exists.")]
     Zsh {
         /// Validate config and report issues without emitting zsh
         #[arg(long)]
         check: bool,
     },
     /// Dump the default YAML config to stdout
-    #[command(
-        long_about = "Dump the full default YAML config to stdout.\n\n\
+    #[command(long_about = "Dump the full default YAML config to stdout.\n\n\
                        Redirect to create your config file:\n  \
                        mkdir -p ~/.config/blx && blx init dump-config > ~/.config/blx/blx.yaml\n\n\
                        Then edit the YAML — only set what you want to override.\n\
-                       Omitted fields use built-in defaults."
-    )]
+                       Omitted fields use built-in defaults.")]
     DumpConfig,
     /// Create config file at ~/.config/blx/blx.yaml
     #[command(
@@ -97,9 +93,8 @@ fn run_check() -> anyhow::Result<()> {
         return Ok(());
     }
 
-    let contents = std::fs::read_to_string(&path).map_err(|e| {
-        anyhow::anyhow!("cannot read {}: {e}", path.display())
-    })?;
+    let contents = std::fs::read_to_string(&path)
+        .map_err(|e| anyhow::anyhow!("cannot read {}: {e}", path.display()))?;
 
     match serde_yaml_ng::from_str::<ShellConfig>(&contents) {
         Ok(config) => {
@@ -173,10 +168,7 @@ fn run_config_bootstrap(force: bool, edit: bool) -> anyhow::Result<()> {
             "skip:".yellow().bold(),
             path.display()
         );
-        eprintln!(
-            "  use {} to overwrite, or edit directly",
-            "--force".bold()
-        );
+        eprintln!("  use {} to overwrite, or edit directly", "--force".bold());
         return Ok(());
     }
 
@@ -189,21 +181,12 @@ fn run_config_bootstrap(force: bool, edit: bool) -> anyhow::Result<()> {
     std::fs::write(&path, &yaml)?;
 
     let verb = if existed { "overwrote" } else { "created" };
-    eprintln!(
-        "{} {verb} {}",
-        "done:".green().bold(),
-        path.display()
-    );
-    eprintln!(
-        "  add to .zshrc: {}",
-        "eval \"$(blx init zsh)\"".bold()
-    );
+    eprintln!("{} {verb} {}", "done:".green().bold(), path.display());
+    eprintln!("  add to .zshrc: {}", "eval \"$(blx init zsh)\"".bold());
 
     if edit {
         let editor = std::env::var("EDITOR").unwrap_or_else(|_| "vi".into());
-        let status = std::process::Command::new(&editor)
-            .arg(&path)
-            .status()?;
+        let status = std::process::Command::new(&editor).arg(&path).status()?;
         if !status.success() {
             anyhow::bail!("{editor} exited with {status}");
         }
@@ -355,20 +338,14 @@ fn emit_completion(out: &mut String, config: &ShellConfig) {
     out.push_str("# ===== Completion System =====\n");
 
     // Cache directory + compinit
-    let _ = writeln!(
-        out,
-        "local _zsh_cache=\"{}\"",
-        c.cache_path
-    );
+    let _ = writeln!(out, "local _zsh_cache=\"{}\"", c.cache_path);
     out.push_str("[[ -d \"$_zsh_cache\" ]] || mkdir -p \"$_zsh_cache\"\n");
     out.push_str("autoload -Uz compinit\n");
     out.push_str("local zcompdump=\"$_zsh_cache/zcompdump-$HOST\"\n");
     out.push_str(
         "if [[ -n ${zcompdump}(#qN.mh+24) ]] || [[ ! -f \"$zcompdump\" ]]; then\n  compinit -d \"$zcompdump\"\nelse\n  compinit -C -d \"$zcompdump\"\nfi\n",
     );
-    out.push_str(
-        "{ [[ ! ${zcompdump}.zwc -nt ${zcompdump} ]] && zcompile \"${zcompdump}\" } &!\n",
-    );
+    out.push_str("{ [[ ! ${zcompdump}.zwc -nt ${zcompdump} ]] && zcompile \"${zcompdump}\" } &!\n");
 
     // Caching
     if c.use_cache {
@@ -461,7 +438,9 @@ fn emit_completion(out: &mut String, config: &ShellConfig) {
     out.push_str("zstyle '*' single-ignored show\n");
 
     // Process completion
-    out.push_str("zstyle ':completion:*:*:*:*:processes' command \"ps -u $USER -o pid,user,comm -w -w\"\n");
+    out.push_str(
+        "zstyle ':completion:*:*:*:*:processes' command \"ps -u $USER -o pid,user,comm -w -w\"\n",
+    );
     out.push_str("zstyle ':completion:*:*:kill:*' menu yes select\n");
     out.push_str("zstyle ':completion:*:*:kill:*' force-list always\n");
     out.push_str("zstyle ':completion:*:*:kill:*' insert-ids single\n");
@@ -647,31 +626,34 @@ fn emit_eza_wrapper(out: &mut String, config: &ShellConfig) {
     }
     let base = base_flags.join(" ");
 
-    let _ = writeln!(out, concat!(
-        "ls() {{\n",
-        "  local -a eza_args=({base})\n",
-        "  local -a paths=()\n",
-        "  local has_l=0 has_a=0 has_t=0 has_r=0 has_1=0\n",
-        "  for arg in \"$@\"; do\n",
-        "    if [[ \"$arg\" == --* ]]; then\n",
-        "      eza_args+=(\"$arg\")\n",
-        "    elif [[ \"$arg\" == -* ]]; then\n",
-        "      [[ \"$arg\" == *l* ]] && has_l=1\n",
-        "      [[ \"$arg\" == *[aA]* ]] && has_a=1\n",
-        "      [[ \"$arg\" == *t* ]] && has_t=1\n",
-        "      [[ \"$arg\" == *r* ]] && has_r=1\n",
-        "      [[ \"$arg\" == *1* ]] && has_1=1\n",
-        "    else\n",
-        "      paths+=(\"$arg\")\n",
-        "    fi\n",
-        "  done\n",
-        "  (( has_l )) && eza_args+=(\"-l\")\n",
-        "  (( has_a )) && eza_args+=(\"-a\")\n",
-        "  (( has_t )) && eza_args+=(--sort=modified)\n",
-        "  (( has_r )) && eza_args+=(--reverse)\n",
-        "  (( has_1 )) && eza_args+=(\"-1\")\n",
-        "  eza \"${{eza_args[@]}}\" \"${{paths[@]}}\"\n",
-        "}}"),
+    let _ = writeln!(
+        out,
+        concat!(
+            "ls() {{\n",
+            "  local -a eza_args=({base})\n",
+            "  local -a paths=()\n",
+            "  local has_l=0 has_a=0 has_t=0 has_r=0 has_1=0\n",
+            "  for arg in \"$@\"; do\n",
+            "    if [[ \"$arg\" == --* ]]; then\n",
+            "      eza_args+=(\"$arg\")\n",
+            "    elif [[ \"$arg\" == -* ]]; then\n",
+            "      [[ \"$arg\" == *l* ]] && has_l=1\n",
+            "      [[ \"$arg\" == *[aA]* ]] && has_a=1\n",
+            "      [[ \"$arg\" == *t* ]] && has_t=1\n",
+            "      [[ \"$arg\" == *r* ]] && has_r=1\n",
+            "      [[ \"$arg\" == *1* ]] && has_1=1\n",
+            "    else\n",
+            "      paths+=(\"$arg\")\n",
+            "    fi\n",
+            "  done\n",
+            "  (( has_l )) && eza_args+=(\"-l\")\n",
+            "  (( has_a )) && eza_args+=(\"-a\")\n",
+            "  (( has_t )) && eza_args+=(--sort=modified)\n",
+            "  (( has_r )) && eza_args+=(--reverse)\n",
+            "  (( has_1 )) && eza_args+=(\"-1\")\n",
+            "  eza \"${{eza_args[@]}}\" \"${{paths[@]}}\"\n",
+            "}}"
+        ),
         base = base
     );
 
@@ -697,9 +679,20 @@ fn emit_skim(out: &mut String, config: &ShellConfig) {
     let colors = &sk.colors;
     let color_str = format!(
         "fg:{},bg:{},hl:{},fg+:{},bg+:{},hl+:{},info:{},prompt:{},pointer:{},marker:{},spinner:{},header:{},border:{},query:{}",
-        colors.fg, colors.bg, colors.hl, colors.fg_plus, colors.bg_plus, colors.hl_plus,
-        colors.info, colors.prompt, colors.pointer, colors.marker, colors.spinner,
-        colors.header, colors.border, colors.query
+        colors.fg,
+        colors.bg,
+        colors.hl,
+        colors.fg_plus,
+        colors.bg_plus,
+        colors.hl_plus,
+        colors.info,
+        colors.prompt,
+        colors.pointer,
+        colors.marker,
+        colors.spinner,
+        colors.header,
+        colors.border,
+        colors.query
     );
 
     let mut parts = Vec::new();
@@ -726,7 +719,11 @@ fn emit_skim(out: &mut String, config: &ShellConfig) {
     // Ctrl+T widget
     let ct = &sk.ctrl_t;
     if ct.enabled {
-        let _ = writeln!(out, "export SKIM_CTRL_T_COMMAND='{}'", shell_quote(&ct.command));
+        let _ = writeln!(
+            out,
+            "export SKIM_CTRL_T_COMMAND='{}'",
+            shell_quote(&ct.command)
+        );
         let mut ct_opts = Vec::new();
         if !ct.scheme.is_empty() {
             ct_opts.push(format!("--scheme={}", ct.scheme));
@@ -744,7 +741,11 @@ fn emit_skim(out: &mut String, config: &ShellConfig) {
     // Alt+C widget
     let ac = &sk.alt_c;
     if ac.enabled {
-        let _ = writeln!(out, "export SKIM_ALT_C_COMMAND='{}'", shell_quote(&ac.command));
+        let _ = writeln!(
+            out,
+            "export SKIM_ALT_C_COMMAND='{}'",
+            shell_quote(&ac.command)
+        );
         let mut ac_opts = Vec::new();
         if !ac.scheme.is_empty() {
             ac_opts.push(format!("--scheme={}", ac.scheme));
@@ -792,29 +793,17 @@ fn emit_plugins(out: &mut String, config: &ShellConfig) {
     // Direnv (before starship — direnv hook must register first)
     if p.direnv.enabled {
         if !p.direnv.log_format.is_empty() {
-            let _ = writeln!(
-                out,
-                "export DIRENV_LOG_FORMAT=\"{}\"",
-                p.direnv.log_format
-            );
+            let _ = writeln!(out, "export DIRENV_LOG_FORMAT=\"{}\"", p.direnv.log_format);
         } else {
             out.push_str("export DIRENV_LOG_FORMAT=\"\"\n");
         }
-        let _ = writeln!(
-            out,
-            "export DIRENV_WARN_TIMEOUT={}",
-            p.direnv.warn_timeout
-        );
+        let _ = writeln!(out, "export DIRENV_WARN_TIMEOUT={}", p.direnv.warn_timeout);
         out.push_str("eval \"$(direnv hook zsh)\"\n");
     }
 
     // Zoxide
     if p.zoxide.enabled {
-        let _ = writeln!(
-            out,
-            "eval \"$(zoxide init zsh --cmd {})\"",
-            p.zoxide.cmd
-        );
+        let _ = writeln!(out, "eval \"$(zoxide init zsh --cmd {})\"", p.zoxide.cmd);
         out.push_str("alias zi='__zoxide_zi'\n");
     }
 
@@ -827,11 +816,7 @@ fn emit_plugins(out: &mut String, config: &ShellConfig) {
         if p.atuin.disable_ctrl_r {
             flags.push("--disable-ctrl-r");
         }
-        let _ = writeln!(
-            out,
-            "eval \"$(atuin init zsh {})\"",
-            flags.join(" ")
-        );
+        let _ = writeln!(out, "eval \"$(atuin init zsh {})\"", flags.join(" "));
     }
 
     // fzf-tab (must be after compinit, before syntax highlighting)
@@ -865,11 +850,7 @@ fn emit_fzf_tab(out: &mut String, ft: &config::FzfTabConfig) {
         "fi\n",
     ));
 
-    let _ = writeln!(
-        out,
-        "zstyle ':fzf-tab:*' fzf-command {}",
-        ft.fzf_command
-    );
+    let _ = writeln!(out, "zstyle ':fzf-tab:*' fzf-command {}", ft.fzf_command);
 
     if ft.use_fzf_default_opts {
         out.push_str("zstyle ':fzf-tab:*' use-fzf-default-opts yes\n");
@@ -991,7 +972,10 @@ mod tests {
     fn validate_default_config_no_warnings() {
         let config = ShellConfig::default();
         let warnings = validate_config(&config);
-        assert!(warnings.is_empty(), "default config should have no warnings: {warnings:?}");
+        assert!(
+            warnings.is_empty(),
+            "default config should have no warnings: {warnings:?}"
+        );
     }
 
     #[test]
@@ -1165,7 +1149,9 @@ mod tests {
     fn environment_user_vars() {
         let mut config = ShellConfig::default();
         config.environment.insert("MY_VAR".into(), "hello".into());
-        config.environment.insert("QUOTED".into(), "it's a test".into());
+        config
+            .environment
+            .insert("QUOTED".into(), "it's a test".into());
         let output = generate_zsh(&config);
         assert!(output.contains("export MY_VAR='hello'\n"));
         assert!(output.contains("export QUOTED='it'\\''s a test'\n"));
@@ -1240,7 +1226,9 @@ mod tests {
     fn aliases_shell_quoted() {
         let mut config = ShellConfig::default();
         config.aliases.clear();
-        config.aliases.insert("test".into(), "echo 'hello world'".into());
+        config
+            .aliases
+            .insert("test".into(), "echo 'hello world'".into());
         let output = generate_zsh(&config);
         assert!(output.contains("alias test='echo '\\''hello world'\\'''"));
     }
@@ -1425,7 +1413,10 @@ mod tests {
         let output = generate_zsh(&config);
         let starship_pos = output.find("starship init").unwrap();
         let sh_pos = output.find("zsh-syntax-highlighting.zsh").unwrap();
-        assert!(sh_pos > starship_pos, "syntax highlighting must come after starship");
+        assert!(
+            sh_pos > starship_pos,
+            "syntax highlighting must come after starship"
+        );
     }
 
     #[test]
@@ -1434,7 +1425,10 @@ mod tests {
         let output = generate_zsh(&config);
         let direnv_pos = output.find("direnv hook").unwrap();
         let starship_pos = output.find("starship init").unwrap();
-        assert!(direnv_pos < starship_pos, "direnv must come before starship");
+        assert!(
+            direnv_pos < starship_pos,
+            "direnv must come before starship"
+        );
     }
 
     #[test]
@@ -1534,7 +1528,9 @@ mod tests {
     #[test]
     fn env_var_value_with_single_quote_is_safe() {
         let mut config = ShellConfig::default();
-        config.environment.insert("DANGER".into(), "'; rm -rf /; echo '".into());
+        config
+            .environment
+            .insert("DANGER".into(), "'; rm -rf /; echo '".into());
         let output = generate_zsh(&config);
         // The leading quote must be escaped — the shell sees:
         //   export DANGER=''\''; rm -rf /; echo '\'''
@@ -1548,7 +1544,9 @@ mod tests {
     fn alias_value_with_single_quote_is_safe() {
         let mut config = ShellConfig::default();
         config.aliases.clear();
-        config.aliases.insert("safe".into(), "echo 'hello'; echo 'world'".into());
+        config
+            .aliases
+            .insert("safe".into(), "echo 'hello'; echo 'world'".into());
         let output = generate_zsh(&config);
         assert!(output.contains("alias safe='echo '\\''hello'\\''"));
     }

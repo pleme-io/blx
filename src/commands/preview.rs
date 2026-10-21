@@ -49,9 +49,11 @@ impl PreviewArgs {
             PreviewCommand::File { path } => preview_file(&path),
             PreviewCommand::Dir { path } => preview_dir(&path),
             PreviewCommand::Proc { group, word } => preview_proc(&group, &word),
-            PreviewCommand::Git { context, word, group } => {
-                preview_git(&context, &word, group.as_deref())
-            }
+            PreviewCommand::Git {
+                context,
+                word,
+                group,
+            } => preview_git(&context, &word, group.as_deref()),
         }
     }
 }
@@ -64,7 +66,12 @@ pub fn preview_file(path: &str) -> Result<()> {
     }
     if p.is_file() {
         let status = Command::new("bat")
-            .args(["--color=always", "--style=numbers", "--line-range=:200", path])
+            .args([
+                "--color=always",
+                "--style=numbers",
+                "--line-range=:200",
+                path,
+            ])
             .status()
             .context("failed to run bat")?;
         if !status.success() {
@@ -79,7 +86,13 @@ pub fn preview_file(path: &str) -> Result<()> {
 /// Preview a directory with eza.
 pub fn preview_dir(path: &str) -> Result<()> {
     let status = Command::new("eza")
-        .args(["-1", "--color=always", "--icons", "--group-directories-first", path])
+        .args([
+            "-1",
+            "--color=always",
+            "--icons",
+            "--group-directories-first",
+            path,
+        ])
         .status()
         .context("failed to run eza")?;
     if !status.success() {
@@ -92,7 +105,12 @@ pub fn preview_dir(path: &str) -> Result<()> {
 pub fn preview_proc(group: &str, word: &str) -> Result<()> {
     if group == "[process ID]" {
         let _ = Command::new("ps")
-            .args(["-p", word, "-o", "comm,pid,ppid,%cpu,%mem,start,time,command"])
+            .args([
+                "-p",
+                word,
+                "-o",
+                "comm,pid,ppid,%cpu,%mem,start,time,command",
+            ])
             .status();
     }
     Ok(())

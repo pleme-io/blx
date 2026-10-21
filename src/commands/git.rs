@@ -234,7 +234,10 @@ fn git_strip_trailers(
             }
             current_hash.clear();
             current_lines.clear();
-        } else if current_hash.is_empty() && line.len() == 40 && line.chars().all(|c| c.is_ascii_hexdigit()) {
+        } else if current_hash.is_empty()
+            && line.len() == 40
+            && line.chars().all(|c| c.is_ascii_hexdigit())
+        {
             current_hash = line.to_string();
         } else {
             current_lines.push(line.to_string());
@@ -275,7 +278,14 @@ fn git_strip_trailers(
     println!("\nrewriting history...");
 
     let status = Command::new("git")
-        .args(["filter-branch", "-f", "--msg-filter", &format!("sed '{sed_pattern}'"), "--", "--all"])
+        .args([
+            "filter-branch",
+            "-f",
+            "--msg-filter",
+            &format!("sed '{sed_pattern}'"),
+            "--",
+            "--all",
+        ])
         .current_dir(&work_dir)
         .env("FILTER_BRANCH_SQUELCH_WARNING", "1")
         .status()

@@ -56,7 +56,8 @@ impl UtilArgs {
 }
 
 fn genpass(length: usize) -> Result<()> {
-    const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
+    const CHARSET: &[u8] =
+        b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
     let mut rng = rand::rng();
     let password: String = (0..length)
         .map(|_| {
@@ -107,8 +108,8 @@ fn histstat(count: usize) -> Result<()> {
     // Read zsh history and compute statistics
     let hist_file = std::env::var("HISTFILE").unwrap_or_else(|_| {
         let home = std::env::var("HOME").unwrap_or_default();
-        let xdg_state = std::env::var("XDG_STATE_HOME")
-            .unwrap_or_else(|_| format!("{home}/.local/state"));
+        let xdg_state =
+            std::env::var("XDG_STATE_HOME").unwrap_or_else(|_| format!("{home}/.local/state"));
         format!("{xdg_state}/zsh/history")
     });
 

@@ -89,4 +89,4 @@ Requires Rust 1.89.0+ (edition 2024).
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).

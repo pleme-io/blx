@@ -1,4 +1,4 @@
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use clap::{Args, Subcommand};
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -71,7 +71,8 @@ fn extract(archive: &Path, output: Option<&Path>) -> Result<()> {
 
     // Fallback: detect format and use standard tools
     let name = archive.to_string_lossy();
-    let (cmd_name, args): (&str, Vec<&str>) = if name.ends_with(".tar.gz") || name.ends_with(".tgz") {
+    let (cmd_name, args): (&str, Vec<&str>) = if name.ends_with(".tar.gz") || name.ends_with(".tgz")
+    {
         ("tar", vec!["xzf"])
     } else if name.ends_with(".tar.bz2") || name.ends_with(".tbz2") {
         ("tar", vec!["xjf"])

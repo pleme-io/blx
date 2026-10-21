@@ -57,8 +57,14 @@ fn try_multicall() -> Option<anyhow::Result<()>> {
                 std::process::exit(1);
             });
             match urlencoding::decode(input) {
-                Ok(decoded) => { println!("{decoded}"); Ok(()) }
-                Err(e) => { eprintln!("error: {e}"); std::process::exit(1); }
+                Ok(decoded) => {
+                    println!("{decoded}");
+                    Ok(())
+                }
+                Err(e) => {
+                    eprintln!("error: {e}");
+                    std::process::exit(1);
+                }
             }
         }
         "weather" => {

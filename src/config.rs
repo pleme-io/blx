@@ -666,9 +666,8 @@ pub fn load_config() -> anyhow::Result<ShellConfig> {
     if !path.exists() {
         return Ok(ShellConfig::default());
     }
-    let contents = std::fs::read_to_string(&path).map_err(|e| {
-        anyhow::anyhow!("cannot read config file {}: {e}", path.display())
-    })?;
+    let contents = std::fs::read_to_string(&path)
+        .map_err(|e| anyhow::anyhow!("cannot read config file {}: {e}", path.display()))?;
     serde_yaml_ng::from_str::<ShellConfig>(&contents).map_err(|e| {
         anyhow::anyhow!(
             "config parse error in {}:\n  {e}\n\n\
@@ -752,8 +751,14 @@ mod tests {
         let yaml = "shell:\n  funcnest: not_a_number\n";
         let err = parse_config(yaml).unwrap_err();
         let msg = err.to_string();
-        assert!(msg.contains("funcnest"), "error should mention the field: {msg}");
-        assert!(msg.contains("invalid type"), "error should describe the type mismatch: {msg}");
+        assert!(
+            msg.contains("funcnest"),
+            "error should mention the field: {msg}"
+        );
+        assert!(
+            msg.contains("invalid type"),
+            "error should describe the type mismatch: {msg}"
+        );
     }
 
     #[test]

@@ -45,15 +45,17 @@ impl K8sArgs {
 }
 
 fn select_pod(namespace: Option<&str>) -> Result<String> {
-    let selector = if which::which("sk").is_ok() { "sk" } else { "fzf" };
+    let selector = if which::which("sk").is_ok() {
+        "sk"
+    } else {
+        "fzf"
+    };
     let ns_args = match namespace {
         Some(ns) => format!("-n {ns}"),
         None => String::new(),
     };
 
-    let script = format!(
-        "kubectl get pods {ns_args} | {selector} | awk '{{print $1}}'"
-    );
+    let script = format!("kubectl get pods {ns_args} | {selector} | awk '{{print $1}}'");
 
     let output = Command::new("sh")
         .arg("-c")

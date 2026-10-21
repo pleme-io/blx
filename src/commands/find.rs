@@ -58,7 +58,12 @@ impl FindArgs {
 fn find_files(query: &str) -> Result<()> {
     let mut cmd = if which::which("fd").is_ok() {
         let mut c = Command::new("fd");
-        c.arg("--type").arg("f").arg("--hidden").arg("--follow").arg("--exclude").arg(".git");
+        c.arg("--type")
+            .arg("f")
+            .arg("--hidden")
+            .arg("--follow")
+            .arg("--exclude")
+            .arg(".git");
         if !query.is_empty() {
             c.arg(query);
         }
@@ -78,7 +83,12 @@ fn find_files(query: &str) -> Result<()> {
 fn find_dirs(query: &str) -> Result<()> {
     let mut cmd = if which::which("fd").is_ok() {
         let mut c = Command::new("fd");
-        c.arg("--type").arg("d").arg("--hidden").arg("--follow").arg("--exclude").arg(".git");
+        c.arg("--type")
+            .arg("d")
+            .arg("--hidden")
+            .arg("--follow")
+            .arg("--exclude")
+            .arg(".git");
         if !query.is_empty() {
             c.arg(query);
         }
@@ -127,7 +137,11 @@ fn find_edit(query: &str) -> Result<()> {
         format!("find . -type f -name '*{query}*'")
     };
 
-    let selector = if which::which("sk").is_ok() { "sk" } else { "fzf" };
+    let selector = if which::which("sk").is_ok() {
+        "sk"
+    } else {
+        "fzf"
+    };
     let preview = if which::which("bat").is_ok() {
         "--preview 'bat --color=always {}' --preview-window=right:60%"
     } else {
@@ -135,7 +149,9 @@ fn find_edit(query: &str) -> Result<()> {
     };
 
     let editor = std::env::var("EDITOR").unwrap_or_else(|_| "vim".into());
-    let script = format!("file=$({fd_cmd} | {selector} {preview}) && [ -n \"$file\" ] && {editor} \"$file\"");
+    let script = format!(
+        "file=$({fd_cmd} | {selector} {preview}) && [ -n \"$file\" ] && {editor} \"$file\""
+    );
 
     Command::new("sh")
         .arg("-c")
@@ -146,7 +162,11 @@ fn find_edit(query: &str) -> Result<()> {
 }
 
 fn find_kill() -> Result<()> {
-    let selector = if which::which("sk").is_ok() { "sk" } else { "fzf" };
+    let selector = if which::which("sk").is_ok() {
+        "sk"
+    } else {
+        "fzf"
+    };
     let script = format!(
         "pid=$(ps aux | sed 1d | {selector} -m | awk '{{print $2}}') && [ -n \"$pid\" ] && echo $pid | xargs kill -9"
     );
@@ -159,7 +179,11 @@ fn find_kill() -> Result<()> {
 }
 
 fn find_checkout() -> Result<()> {
-    let selector = if which::which("sk").is_ok() { "sk" } else { "fzf" };
+    let selector = if which::which("sk").is_ok() {
+        "sk"
+    } else {
+        "fzf"
+    };
     let script = format!(
         "branch=$(git branch --all | grep -v HEAD | {selector} | sed 's/^[* ]*//' | sed 's#remotes/origin/##') && [ -n \"$branch\" ] && git checkout \"$branch\""
     );
