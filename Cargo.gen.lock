@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "cargo_lock_sha256": "76423dd32b80ee7702ea1c57eff69271a2ac5f2458aa2e097496969412ee9bdd",
+  "cargo_lock_sha256": "043c79a484b349dd22c74b33253bf4454f2de5e56b6cea8b052626c20b7262fe",
   "manifest_sha256": {
     "Cargo.toml": "6fbf05c068f28d4be6c989cba847e4841cc6fa396e409985b7ddc04ded253a00"
   },
@@ -160,7 +160,7 @@
           "std"
         ]
       },
-      "cc-1.9.0": {
+      "cc-1.10.0": {
         "runtime_dependencies": [
           {
             "name": "find_msvc_tools",
@@ -1101,7 +1101,7 @@
           },
           {
             "name": "smallvec",
-            "package_key": "smallvec-1.16.3",
+            "package_key": "smallvec-1.16.4",
             "kind": "normal",
             "features": [
               "const_generics",
@@ -1450,7 +1450,7 @@
           },
           {
             "name": "yoke",
-            "package_key": "yoke-0.8.3",
+            "package_key": "yoke-0.8.4",
             "kind": "normal",
             "features": [
               "derive"
@@ -1581,7 +1581,7 @@
           },
           {
             "name": "smallvec",
-            "package_key": "smallvec-1.16.3",
+            "package_key": "smallvec-1.16.4",
             "kind": "normal",
             "features": [],
             "uses_default_features": false,
@@ -1735,7 +1735,7 @@
           },
           {
             "name": "yoke",
-            "package_key": "yoke-0.8.3",
+            "package_key": "yoke-0.8.4",
             "kind": "normal",
             "features": [
               "derive"
@@ -1799,7 +1799,7 @@
           },
           {
             "name": "smallvec",
-            "package_key": "smallvec-1.16.3",
+            "package_key": "smallvec-1.16.4",
             "kind": "normal",
             "features": [
               "const_generics"
@@ -2116,7 +2116,7 @@
           },
           {
             "name": "smallvec",
-            "package_key": "smallvec-1.16.3",
+            "package_key": "smallvec-1.16.4",
             "kind": "normal",
             "features": [],
             "uses_default_features": true,
@@ -3618,7 +3618,7 @@
           "std"
         ]
       },
-      "smallvec-1.16.3": {
+      "smallvec-1.16.4": {
         "runtime_dependencies": [],
         "build_dependencies": [],
         "features": [
@@ -4488,7 +4488,7 @@
         "build_dependencies": [],
         "features": []
       },
-      "yoke-0.8.3": {
+      "yoke-0.8.4": {
         "runtime_dependencies": [
           {
             "name": "stable_deref_trait",
@@ -4672,7 +4672,7 @@
           },
           {
             "name": "yoke",
-            "package_key": "yoke-0.8.3",
+            "package_key": "yoke-0.8.4",
             "kind": "normal",
             "features": [
               "derive"
@@ -4703,7 +4703,7 @@
         "runtime_dependencies": [
           {
             "name": "yoke",
-            "package_key": "yoke-0.8.3",
+            "package_key": "yoke-0.8.4",
             "kind": "normal",
             "features": [],
             "uses_default_features": false,
@@ -4895,7 +4895,7 @@
             "build_dependencies": [
               {
                 "name": "cc",
-                "package_key": "cc-1.9.0",
+                "package_key": "cc-1.10.0",
                 "kind": "build",
                 "features": [],
                 "uses_default_features": false,
@@ -5088,7 +5088,7 @@
             "build_dependencies": [
               {
                 "name": "cc",
-                "package_key": "cc-1.9.0",
+                "package_key": "cc-1.10.0",
                 "kind": "build",
                 "features": [],
                 "uses_default_features": false,
@@ -5312,7 +5312,7 @@
             "build_dependencies": [
               {
                 "name": "cc",
-                "package_key": "cc-1.9.0",
+                "package_key": "cc-1.10.0",
                 "kind": "build",
                 "features": [],
                 "uses_default_features": false,
@@ -5538,7 +5538,7 @@
             "build_dependencies": [
               {
                 "name": "cc",
-                "package_key": "cc-1.9.0",
+                "package_key": "cc-1.10.0",
                 "kind": "build",
                 "features": [],
                 "uses_default_features": false,
@@ -5726,7 +5726,7 @@
             "build_dependencies": [
               {
                 "name": "cc",
-                "package_key": "cc-1.9.0",
+                "package_key": "cc-1.10.0",
                 "kind": "build",
                 "features": [],
                 "uses_default_features": false,
@@ -5945,7 +5945,7 @@
             "build_dependencies": [
               {
                 "name": "cc",
-                "package_key": "cc-1.9.0",
+                "package_key": "cc-1.10.0",
                 "kind": "build",
                 "features": [],
                 "uses_default_features": false,
@@ -6101,7 +6101,7 @@
     "bytes-1.12.1": {
       "edition": "2021"
     },
-    "cc-1.9.0": {
+    "cc-1.10.0": {
       "edition": "2021"
     },
     "cfg-if-1.0.5": {
@@ -6443,7 +6443,7 @@
     "slab-0.4.12": {
       "edition": "2018"
     },
-    "smallvec-1.16.3": {
+    "smallvec-1.16.4": {
       "edition": "2018"
     },
     "socket2-0.6.5": {
@@ -6555,7 +6555,7 @@
     "writeable-0.6.4": {
       "edition": "2021"
     },
-    "yoke-0.8.3": {
+    "yoke-0.8.4": {
       "edition": "2021"
     },
     "yoke-derive-0.8.4": {
